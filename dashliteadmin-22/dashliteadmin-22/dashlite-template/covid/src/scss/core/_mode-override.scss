@@ -1,0 +1,16 @@
+//// BODY STYLE OVERRIDE 
+////////////////////////////////
+.nk-body{
+    &.ui-clean{
+        background:$white !important;
+    }
+    &.ui-softy, &.ui-shady{
+        background: $lighter !important;
+    }
+}
+
+.ui-rounder{
+    .card,.embed-responsive{
+        border-radius: $border-radius-xxl;
+    }
+}
