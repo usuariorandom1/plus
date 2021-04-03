@@ -9,9 +9,9 @@ var addPay
 var addresact
 const  decimals = 1000000; //8 decimals in test, 6 decimals in production
 const  trc20ContractAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-const  fullNode = 'https://api.nileex.io';     //Production: https://api.trongrid.io
+const  fullNode = 'https://api.shasta.trongrid.io';     //Production: https://api.trongrid.io
 const  solidityNode = 'https://api.shasta.trongrid.io'; //Test: https://api.shasta.trongrid.io
-const  eventServer = 'https://event.nileex.io';
+const  eventServer = 'https://api.shasta.trongrid.io';
 // USDT Token = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'
 // TEST Token = 'TQ7srwpzYEU9j7b5pcd31NgUKDQ64oZSuG'
 
@@ -95,6 +95,7 @@ async function balanceact() {
 
   let Inv; 
   let Ref;
+  var IdUser;
     
   await tronWeb.trx.getAccount(addresact).then(_balance => {
   // sleep(1000);
@@ -110,25 +111,26 @@ async function balanceact() {
   }
   // console.log(window.tronWeb);
 
-  myContract.userIDsA(addresact).call().then(IdUsA => {
-    var IdUser = parseInt(IdUsA.id);
-    myContract.referersA(IdUser).call().then(RefA => {
-      console.log({RefA});
-      $("#AmounEarnedRef").text(RefA.amountEarn/decimals);
-      $("#Ref0").text(RefA.level1);
-      $("#Ref1").text(RefA.level2);
-      $("#Ref2").text(RefA.level3);
-      $("#Ref3").text(RefA.level4);
-      $("#Ref4").text(RefA.level5);
-      $("#Ref5").text(RefA.level6);
-      $("#Ref6").text(RefA.level7);
-    }).catch(err => console.error(err));
+  await myContract.userIDsA(addresact).call().then(IdUsA => {
+    this.IdUser = IdUsA.id;
+    // sleep(20);
+  }).catch(err => console.error(err));
+  await myContract.referersA(this.IdUser).call().then(RefA => {
+    // console.log({RefA});
+    $("#AmounEarnedRef").text(RefA.amountEarn/decimals);
+    $("#Ref0").text(RefA.level1);
+    $("#Ref1").text(RefA.level2);
+    $("#Ref2").text(RefA.level3);
+    $("#Ref3").text(RefA.level4);
+    $("#Ref4").text(RefA.level5);
+    $("#Ref5").text(RefA.level6);
+    $("#Ref6").text(RefA.level7);
   }).catch(err => console.error(err));
 
   myContract.userIDsB(addresact).call().then(IdUsB => {
     var IdUser = parseInt(IdUsB.id);
     myContract.referersB(IdUser).call().then(RefB => {
-      console.log({RefB});
+      // console.log({RefB});
       $("#AmounEarnedRefB").text(RefB.amountEarn/decimals);
       $("#RefB0").text(RefB.level1);
       $("#RefB1").text(RefB.level2);
@@ -137,6 +139,15 @@ async function balanceact() {
     }).catch(err => console.error(err));
   }).catch(err => console.error(err));
 
+  // var myHeaders = new Headers(); // Currently empty
+  // myHeaders.get('Accept-Encoding'); // Returns 'gzip'
+  // myHeaders.set('Content-Type', 'text/html');
+
+  // xmlhttp = new XMLHttpRequest();
+  // xmlhttp.open("GET", "https://tronscan.org/#/blockchain/nodes", false);
+  // xmlhttp.send();
+  // var data = JSON.parse(xmlhttp.responseText);
+  // console.log(data);
 }
 
 App = {
@@ -179,22 +190,37 @@ App = {
       await this.gettronweb();
       // await this.sleep(1000);
 
-      var totalInvest;
+      var prizeA;
+      var prizeB;
+      var withdrawn;
+      var AVWithdraw;
+      var totalAmountInvB;
       var timepay;
-      var totalInvest;
+      var payuser;
+      var totalInvestors;
+      var totalTronInvest;
+      var totalInvestedUser;
       // var myContract = new XMLHttpRequest();
       const myContract = await tronWeb.contract().at(this.contractAddress);
 
-      myContract.totalInvestors().call().then(totalInv => {
-        this.totalInvest = parseInt(totalInv);
-        $("#Investors").text(this.totalInvest);
-        $("#InvestorsB").text(this.totalInvest);
+      myContract.totalInvestorsA().call().then(totalInv => {
+        this.totalInvestors = parseInt(totalInv);
+        $("#Investors").text(this.totalInvestors);
+      }).catch(err => console.error(err));
+
+      myContract.totalInvestorsB().call().then(totalInvB => {
+        var inv = parseInt(totalInvB);
+        $("#InvestorsB").text(inv);
       }).catch(err => console.error(err));
 	    
-      myContract.totalTronInvested().call().then(totalInvested => {
-        this.totalInvest = parseInt(totalInvested);
-        $("#totalInvest").text(this.totalInvest/decimals);
-        $("#totalInvestB").text(this.totalInvest/decimals);
+      myContract.totalTronInvestedA().call().then(totalInvested => {
+        this.totalTronInvest = parseInt(totalInvested);
+        $("#totalInvest").text(this.totalTronInvest/decimals);
+      }).catch(err => console.error(err));
+
+      myContract.totalTronInvestedB().call().then(totalInvestedB => {
+        var totalInvB = parseInt(totalInvestedB);
+        $("#totalInvestB").text(totalInvB/decimals);
       }).catch(err => console.error(err));
 
       myContract.BankAAwards().call().then(BankAAwards => {
@@ -205,7 +231,7 @@ App = {
         $("#WJackpotB").text(BankAAwards/decimals);
       }).catch(err => console.error(err));
 
-      myContract.idWeek().call().then(idWeek => {
+      await myContract.idWeek().call().then(idWeek => {
         $("#Week").text(idWeek);
         $("#WeekB").text(idWeek);
       }).catch(err => console.error(err));
@@ -214,63 +240,78 @@ App = {
       //   $("#totalActiveInvestors").text(totalInvActiv);
       // }).catch(err => console.error(err));
 
-      myContract.getPrizeA().call().then(PrizeA => {
+      await myContract.getPrizeA().call().then(PrizeA => {
         console.log(PrizeA);
-        // console.log(PrizeA.i);
         for(var i = 0; i < PrizeA.i; i++) {
           $("#Pos"+i).text(convert_address(PrizeA.addr[i]));
           $("#Amount"+i).text(PrizeA.totalRef[i]);
         }
       }).catch(err => console.error(err));
 
-      myContract.getPrizeB().call().then(PrizeB => {
-        // console.log(PrizeB.i);
+      await myContract.getPrizeB().call().then(PrizeB => {
+        console.log({PrizeB});
+        // if(PrizeB.i > 0) {
         for(var i = 0; i < PrizeB.i; i++) {
           $("#PosB"+i).text(convert_address(PrizeB.addr[i]));
-          $("#AmountB"+i).text(PrizeB.totalRef[i]);
+          $("#AmountB"+i).text(parseInt(PrizeB.totalInvRef[i])/decimals);
         }
+        // }
       }).catch(err => console.error(err));
 
-      myContract.getLastWeekA().call().then(LastWA => {
-        // console.log(LastWA);
+      await myContract.getLastWeekA().call().then(LastWA => {
+        // console.log({LastWA});
         for(var i = 0; i < LastWA.i; i++) {
           $("#LWPos"+i).text(convert_address(LastWA.addr[i]));
-          $("#LWAmount"+i).text(LastWA.totalRef[i]);
+          $("#LWAmount"+i).text(parseInt(LastWA.totalEarn[i]));
+          // sleep(10);
         }
       }).catch(err => console.error(err));
 
-      myContract.getLastWeekB().call().then(LastWB => {
-        // console.log(LastWB);
+      await myContract.getLastWeekB().call().then(LastWB => {
+        // console.log({LastWB});
         for(var i = 0; i < LastWB.i; i++) {
           $("#LWPosB"+i).text(convert_address(LastWB.addr[i]));
-          $("#LWAmountB"+i).text(LastWB.totalRef[i]);
+          $("#LWAmountB"+i).text(parseInt(LastWB.totalEarn[i])/decimals);
         }
       }).catch(err => console.error(err));
 
       myContract.bankA(addresact).call().then(bankA => {
-        var withdrawn = parseInt(bankA.totalAmountPayments);
-        var AVWithdraw = parseInt(bankA.availableWithdraw);
-        var prize = parseInt(bankA.prize);
-
-        pay = AVWithdraw+prize;
-        $("#Invest").text(bankA.totalAmountInvest/decimals);
-        $("#YourRef").text(bankA.countRef);
-        $("#Withdrawn").text(withdrawn/decimals);
-        $("#AVWithdraw").text((AVWithdraw+prize)/decimals);
+        // this.BankA = this.bankA;
+      
+      // console.log(this.bankA);
+      this.withdrawn = parseInt(bankA.totalAmountPayments);
+      this.AVWithdraw = parseInt(bankA.availableWithdraw);
+      this.prizeA = parseInt(bankA.prize);
+      // pay = AVWithdraw+prize;
+      $("#Invest").text(bankA.totalAmountInvest/decimals);
+      $("#YourRef").text(bankA.countRef);
+      $("#Withdrawn").text(this.withdrawn/decimals);
+      $("#AVWithdraw").text((this.AVWithdraw+this.prizeA)/decimals);
       }).catch(err => console.error(err));
 
       myContract.bankB(addresact).call().then(bankB => {
-        var withdrawn = parseInt(bankB.totalAmountPayments);
-        var AVWithdraw = parseInt(bankB.availableWithdraw);
-        var prize = parseInt(bankB.prize);
-        // console.log({AVWithdraw});
-        // console.log({prize});
-        payB = AVWithdraw+prize;
+        console.log({bankB});
+        // this.withdrawnB = parseInt(bankB.totalAmountPayments);
+        this.totalAmountInvB = parseInt(bankB.totalAmountInvest);
+        this.prizeB = parseInt(bankB.prize);
+
         $("#InvestB").text(bankB.totalAmountInvest/decimals);
         $("#YourRefB").text(bankB.countRef);
-        $("#WithdrawnB").text(withdrawn/decimals);
-        $("#AVWithdrawB").text((AVWithdraw+prize)/decimals);
+        $("#WithdrawnB").text(bankB.totalAmountPayments/decimals);
       }).catch(err => console.error(err));
+
+      myContract.subtractTimeB().call().then(timep => {
+        this.timepay = parseInt(timep);
+        var payuser = this.totalAmountInvB * 20 / 1000;
+        payuser = payuser / 86400;
+        payuser = (payuser * this.timepay);
+        // payuser = payuser + this.totalref;
+        payuser = payuser + this.prizeB;
+        payuser = payuser / decimals;
+        // this.pay = payuser;
+        payuser = payuser.toFixed(6);
+        $("#AVWithdrawB").text(payuser);
+      }).catch(err => console.error(err))
 
       // myHeaders.set('Accept-Encoding', 'deflate');
       // $.ajax("https://coinranking.com/coin/qUhEFk1I61atv+tron-trx", {
