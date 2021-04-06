@@ -9,9 +9,9 @@ var addPay
 var addresact
 const  decimals = 1000000; //8 decimals in test, 6 decimals in production
 const  trc20ContractAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-const  fullNode = 'https://api.nileex.io';     //Production: https://api.trongrid.io
+const  fullNode = 'https://api.shasta.trongrid.io';     //Production: https://api.trongrid.io
 const  solidityNode = 'https://api.shasta.trongrid.io'; //Test: https://api.shasta.trongrid.io
-const  eventServer = 'https://event.nileex.io';
+const  eventServer = 'https://api.shasta.trongrid.io';
 // USDT Token = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'
 // TEST Token = 'TQ7srwpzYEU9j7b5pcd31NgUKDQ64oZSuG'
 
@@ -196,6 +196,8 @@ App = {
 
       var prizeA;
       var prizeB;
+      var amountEarnRefA;
+      var amountEarnRefB;
       var withdrawn;
       var AVWithdraw;
       var totalAmountInvB;
@@ -284,8 +286,7 @@ App = {
 
       myContract.bankA(addresact).call().then(bankA => {
         // this.BankA = this.bankA;
-      
-        // console.log(this.bankA);
+        this.amountEarnRefA = parseInt(bankA.amountEarnRef);
         this.withdrawn = parseInt(bankA.totalAmountPayments);
         this.AVWithdraw = parseInt(bankA.availableWithdraw);
         this.prizeA = parseInt(bankA.prize);
@@ -293,12 +294,12 @@ App = {
         $("#Invest").text(bankA.totalAmountInvest/decimals);
         $("#YourRef").text(bankA.countRef);
         $("#Withdrawn").text(this.withdrawn/decimals);
-        $("#AVWithdraw").text((this.AVWithdraw+this.prizeA)/decimals);
+        $("#AVWithdraw").text((this.AVWithdraw+this.amountEarnRefA+this.prizeA)/decimals);
       }).catch(err => console.error(err));
 
       myContract.bankB(addresact).call().then(bankB => {
         console.log({bankB});
-        // this.withdrawnB = parseInt(bankB.totalAmountPayments);
+        this.amountEarnRefB = parseInt(bankB.amountEarnRef);
         this.totalAmountInvB = parseInt(bankB.totalAmountInvest);
         this.prizeB = parseInt(bankB.prize);
 
@@ -309,10 +310,10 @@ App = {
 
       myContract.subtractTimeB().call().then(timep => {
         this.timepay = parseInt(timep);
-        var payuser = this.totalAmountInvB * 20 / 1000;
-        payuser = payuser / 86400;
+        var payuser = this.totalAmountInvB * 2000 / 1000;//* 20 / 1000;
+        payuser = payuser / 600;//86400;
         payuser = (payuser * this.timepay);
-        // payuser = payuser + this.totalref;
+        payuser = payuser + this.amountEarnRefB;
         payuser = payuser + this.prizeB;
         payuser = payuser / decimals;
         this.payB = payuser;
