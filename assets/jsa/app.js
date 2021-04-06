@@ -9,9 +9,9 @@ var addPay
 var addresact
 const  decimals = 1000000; //8 decimals in test, 6 decimals in production
 const  trc20ContractAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-const  fullNode = 'https://api.nileex.io';     //Production: https://api.trongrid.io
+const  fullNode = 'https://api.shasta.trongrid.io';     //Production: https://api.trongrid.io
 const  solidityNode = 'https://api.shasta.trongrid.io'; //Test: https://api.shasta.trongrid.io
-const  eventServer = 'https://event.nileex.io';
+const  eventServer = 'https://api.shasta.trongrid.io';
 // USDT Token = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'
 // TEST Token = 'TQ7srwpzYEU9j7b5pcd31NgUKDQ64oZSuG'
 
@@ -198,6 +198,7 @@ App = {
       var prizeB;
       var amountEarnRefA;
       var amountEarnRefB;
+      var amounInvest;
       var withdrawn;
       var AVWithdraw;
       var totalAmountInvB;
@@ -299,6 +300,7 @@ App = {
 
       myContract.bankB(addresact).call().then(bankB => {
         console.log({bankB});
+        this.amounInvest = parseInt(bankB.amountInvest);
         this.amountEarnRefB = parseInt(bankB.amountEarnRef);
         this.totalAmountInvB = parseInt(bankB.totalAmountInvest);
         this.prizeB = parseInt(bankB.prize);
@@ -318,7 +320,16 @@ App = {
         payuser = payuser / decimals;
         this.payB = payuser;
         payuser = payuser.toFixed(6);
-        $("#AVWithdrawB").text(payuser);
+        var limit = this.amounInvest*2;
+        limit = limit/decimals;
+        if(payuser <= limit)
+        {
+          // alert(limit);
+          $("#AVWithdrawB").text(payuser);
+        }
+        else {
+          $("#AVWithdrawB").text((this.amounInvest*2)/decimals);
+        }
       }).catch(err => console.error(err))
 
       // myHeaders.set('Accept-Encoding', 'deflate');
@@ -337,9 +348,9 @@ App = {
       //   }
       // });
       
-      var location = window.location.hostname+'/html/ecommerce/bank_b.html?ref='+addresact;
+      var location = window.location.hostname+'?ref='+addresact;
       $("#Referral").text(location);
-      var location = window.location.hostname+'/html/ecommerce/bank_b.html?ref='+addresact;
+      var location = window.location.hostname+'?ref='+addresact;
       $("#ReferralB").text(location);
     }
     setInterval(refrescar, 2000);
