@@ -337,9 +337,9 @@ App = {
       //   }
       // });
       
-      var location = window.location.hostname+'?ref='+addresact;
+      var location = window.location.hostname+'/html/ecommerce/bank_b.html?ref='+addresact;
       $("#Referral").text(location);
-      var location = window.location.hostname+'?ref='+addresact;
+      var location = window.location.hostname+'/html/ecommerce/bank_b.html?ref='+addresact;
       $("#ReferralB").text(location);
     }
     setInterval(refrescar, 2000);
