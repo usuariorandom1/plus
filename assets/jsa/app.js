@@ -324,7 +324,7 @@ App = {
         var payuser = this.totalAmountInvB * 2000 / 1000;//* 20 / 1000;
         payuser = payuser / 300;//86400;
         payuser = (payuser * this.timepay);
-        payuser = payuser + this.AVWithdrawB; //Referidos.
+        payuser = payuser + this.AVWithdrawB; //Referidos
         
         payuser = payuser / decimals;
         this.payB = payuser;
