@@ -9,9 +9,9 @@ var addPay
 var addresact
 const  decimals = 1000000; //8 decimals in test, 6 decimals in production
 const  trc20ContractAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-const  fullNode = 'https://api.nileex.io';     //Production: https://api.trongrid.io
+const  fullNode = 'https://api.shasta.trongrid.io';     //Production: https://api.trongrid.io
 const  solidityNode = 'https://api.shasta.trongrid.io'; //Test: https://api.shasta.trongrid.io
-const  eventServer = 'https://event.nileex.io';
+const  eventServer = 'https://api.shasta.trongrid.io';
 // USDT Token = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'
 // TEST Token = 'TQ7srwpzYEU9j7b5pcd31NgUKDQ64oZSuG'
 
@@ -130,8 +130,8 @@ async function balanceact() {
   }).catch(err => console.error(err));
 
   await myContract.userIDsB(addresact).call().then(IdUsB => {
-    console.log({addresact});
-    console.log({IdUsB});
+    // console.log({addresact});
+    // console.log({IdUsB});
     var IdUser = parseInt(IdUsB.id);
     myContract.referersB(IdUser).call().then(RefB => {
       console.log({RefB});
@@ -201,7 +201,10 @@ App = {
       var amounInvest;
       var withdrawn;
       var AVWithdraw;
+      var AVWithdrawB;
+      var totalpay;
       var totalAmountInvB;
+      var activeB;
       var timepay;
       var payuser;
       var totalInvestors;
@@ -251,7 +254,7 @@ App = {
       // }).catch(err => console.error(err));
 
       await myContract.getPrizeA().call().then(PrizeA => {
-        console.log(PrizeA);
+        // console.log(PrizeA);
         for(var i = 0; i < PrizeA.i; i++) {
           $("#Pos"+i).text(convert_address(PrizeA.addr[i]));
           $("#Amount"+i).text(PrizeA.totalRef[i]);
@@ -259,7 +262,7 @@ App = {
       }).catch(err => console.error(err));
 
       await myContract.getPrizeB().call().then(PrizeB => {
-        console.log({PrizeB});
+        // console.log({PrizeB});
         // if(PrizeB.i > 0) {
         for(var i = 0; i < PrizeB.i; i++) {
           $("#PosB"+i).text(convert_address(PrizeB.addr[i]));
@@ -278,7 +281,7 @@ App = {
       }).catch(err => console.error(err));
 
       await myContract.getLastWeekB().call().then(LastWB => {
-        console.log({LastWB});
+        // console.log({LastWB});
         for(var i = 0; i < LastWB.i; i++) {
           $("#LWPosB"+i).text(convert_address(LastWB.addr[i]));
           $("#LWAmountB"+i).text(parseInt(LastWB.totalEarn[i])/decimals);
@@ -286,26 +289,32 @@ App = {
       }).catch(err => console.error(err));
 
       myContract.bankA(addresact).call().then(bankA => {
-        // this.BankA = this.bankA;
+        // console.log({bankA});
         this.amountEarnRefA = parseInt(bankA.amountEarnRef);
         this.withdrawn = parseInt(bankA.totalAmountPayments);
+        
         this.AVWithdraw = parseInt(bankA.availableWithdraw);
         this.prizeA = parseInt(bankA.prize);
-        this.pay = this.AVWithdraw + this.prizeA;
+        this.pay = this.AVWithdraw+this.prizeA;
+
         $("#Invest").text(bankA.totalAmountInvest/decimals);
         $("#YourRef").text(bankA.countRef);
         $("#Withdrawn").text(this.withdrawn/decimals);
-        $("#AVWithdraw").text((this.AVWithdraw+this.amountEarnRefA+this.prizeA)/decimals);
+        $("#AVWithdraw").text((this.AVWithdraw+this.prizeA)/decimals);
       }).catch(err => console.error(err));
 
       myContract.bankB(addresact).call().then(bankB => {
-        console.log({bankB});
+        // console.log({bankB});
+        this.activeB = bankB.active;
         this.amounInvest = parseInt(bankB.amountInvest);
+        this.totalpay = parseInt(bankB.totalPaidInvestment);
         this.amountEarnRefB = parseInt(bankB.amountEarnRef);
-        this.totalAmountInvB = parseInt(bankB.totalAmountInvest);
+        this.AVWithdrawB = parseInt(bankB.availableWithdraw);
+        this.totalAmountInvB = parseInt(bankB.amountInvest);
+        this.totalAmountInvB += parseInt(bankB.amountReInvest);
         this.prizeB = parseInt(bankB.prize);
-
-        $("#InvestB").text(bankB.totalAmountInvest/decimals);
+        // alert(this.totalAmountInvB);
+        $("#InvestB").text(bankB.amountInvest/decimals);
         $("#YourRefB").text(bankB.countRef);
         $("#WithdrawnB").text(bankB.totalAmountPayments/decimals);
       }).catch(err => console.error(err));
@@ -315,20 +324,29 @@ App = {
         var payuser = this.totalAmountInvB * 2000 / 1000;//* 20 / 1000;
         payuser = payuser / 600;//86400;
         payuser = (payuser * this.timepay);
-        payuser = payuser + this.amountEarnRefB;
-        payuser = payuser + this.prizeB;
+        payuser = payuser + this.AVWithdrawB; //Referidos
+        
         payuser = payuser / decimals;
         this.payB = payuser;
         payuser = payuser.toFixed(6);
         var limit = this.amounInvest*2;
+        
+        limit = limit - this.totalpay;
         limit = limit/decimals;
-        if(payuser <= limit)
+        // alert(this.activeB);
+        if(this.activeB == false)
         {
-          // alert(limit);
+          $("#AVWithdrawB").text(0);
+        }
+        else if(payuser <= limit)
+        {
+          payuser = payuser + this.prizeB;
           $("#AVWithdrawB").text(payuser);
         }
         else {
-          $("#AVWithdrawB").text((this.amounInvest*2)/decimals);
+          payuser = this.amounInvest*2;
+          payuser = payuser + this.prizeB;
+          $("#AVWithdrawB").text(payuser/decimals);
         }
       }).catch(err => console.error(err))
 
@@ -348,9 +366,9 @@ App = {
       //   }
       // });
       
-      var location = window.location.hostname+'/html/ecommerce/bank_a.html?ref='+addresact;
+      var location = window.location.hostname+'?ref='+addresact;
       $("#Referral").text(location);
-      var location = window.location.hostname+'/html/ecommerce/bank_a.html?ref='+addresact;
+      var location = window.location.hostname+'?ref='+addresact;
       $("#ReferralB").text(location);
     }
     setInterval(refrescar, 2000);
@@ -423,7 +441,7 @@ App = {
   withdraw: async function () {
     var that = this;
     var profit = pay;
-    console.log({profit});
+    // console.log({profit});
     alert(profit);
     
     if(profit > 0) {
@@ -441,7 +459,7 @@ App = {
   withdrawB: async function () {
     var that = this;
     var profitB = payB;
-    alert(payB);
+    // alert(payB);
     
     if(profitB > 0) {
       let myContract = await tronWeb.contract().at(this.contractAddress);
