@@ -203,7 +203,7 @@ App = {
       var AVWithdraw;
       var AVWithdrawB;
       var totalpay;
-      var totalAmountInvB;
+      var totalAmountReInv;
       var activeB;
       var timepay;
       var payuser;
@@ -310,8 +310,8 @@ App = {
         this.totalpay = parseInt(bankB.totalPaidInvestment);
         this.amountEarnRefB = parseInt(bankB.amountEarnRef);
         this.AVWithdrawB = parseInt(bankB.availableWithdraw);
-        this.totalAmountInvB = parseInt(bankB.amountInvest);
-        this.totalAmountInvB += parseInt(bankB.amountReInvest);
+        this.totalAmountReInv = parseInt(bankB.amountReInvest);
+        this.totalAmountReInv += this.amounInvest;
         this.prizeB = parseInt(bankB.prize);
         // alert(this.totalAmountInvB);
         $("#InvestB").text(bankB.amountInvest/decimals);
@@ -321,7 +321,7 @@ App = {
 
       myContract.subtractTimeB().call().then(timep => {
         this.timepay = parseInt(timep);
-        var payuser = this.totalAmountInvB * 2000 / 1000;//* 20 / 1000;
+        var payuser = this.totalAmountReInv * 2000 / 1000;//* 20 / 1000;
         payuser = payuser / 600;//86400;
         payuser = (payuser * this.timepay);
         payuser = payuser + this.AVWithdrawB; //Referidos
