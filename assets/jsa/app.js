@@ -322,7 +322,7 @@ App = {
       myContract.subtractTimeB().call().then(timep => {
         this.timepay = parseInt(timep);
         var payuser = this.totalAmountInvB * 2000 / 1000;//* 20 / 1000;
-        payuser = payuser / 300;//86400;
+        payuser = payuser / 600;//86400;
         payuser = (payuser * this.timepay);
         payuser = payuser + this.AVWithdrawB; //Referidos
         
