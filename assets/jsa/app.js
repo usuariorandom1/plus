@@ -346,6 +346,7 @@ App = {
         else {
           payuser = this.amounInvest*2;
           payuser = payuser + this.prizeB;
+          payuser = payuser - this.totalpay;
           $("#AVWithdrawB").text(payuser/decimals);
         }
       }).catch(err => console.error(err))
