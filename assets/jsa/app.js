@@ -341,6 +341,7 @@ App = {
         else if(payuser <= limit)
         {
           payuser = payuser + this.prizeB;
+          payuser = payuser - this.totalpay;
           $("#AVWithdrawB").text(payuser);
         }
         else {
