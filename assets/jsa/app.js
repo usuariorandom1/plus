@@ -321,12 +321,19 @@ App = {
 
       myContract.subtractTimeB().call().then(timep => {
         this.timepay = parseInt(timep);
-        // var payuser = this.totalAmountReInv * 2000 / 1000;//* 20 / 1000;
-        var payuser = this.timepay * 2000 / 1000;//* 20 / 1000;
 
-        payuser = payuser / 1200;//86400;
+        var payuser = this.totalAmountReInv;
+        // uint40 timepa = uint40(block.timestamp) - _bankB.initTime;
+        // uint256 payprofit = _bankB.amountInvest + _bankB.amountReInvest;
+        // payprofit = payprofit * 2000 / 1000;//20 / 1000; 2%
+        // payprofit = payprofit / 1200;//86400 day
+        // uint256 totalpay = timepa * payprofit;
+        
+        // var payuser = this.totalAmountReInv * 2000 / 1000;//* 20 / 1000;
+        payuser = payuser * 2000 / 1000//* 20 / 1000;
+        payuser = payuser / 1200;//86400; day
         payuser = (payuser * this.timepay);
-        payuser = payuser + this.AVWithdrawB; //Referidos
+        // payuser = payuser + this.AVWithdrawB; //Referidos
         
         payuser = payuser / decimals;
         this.payB = payuser;
