@@ -333,7 +333,7 @@ App = {
         payuser = payuser * 2000 / 1000//* 20 / 1000;
         payuser = payuser / 1200;//86400; day
         // if(this.timepay)
-        // payuser = (payuser * this.timepay);
+        payuser = (payuser * this.timepay);
         // payuser = payuser + this.AVWithdrawB; //Referidos
         
         payuser = payuser / decimals;
