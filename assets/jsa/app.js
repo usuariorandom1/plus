@@ -325,7 +325,7 @@ App = {
         var payuser = this.totalAmountReInv;
         // uint40 timepa = uint40(block.timestamp) - _bankB.initTime;
         // uint256 payprofit = _bankB.amountInvest + _bankB.amountReInvest;
-        // payprofit = payprofit * 2000 / 1000;//20 / 1000; 2%
+        // payprofit = payprofit * 2000 / 1000;//20 / 1000; 2%.
         // payprofit = payprofit / 1200;//86400 day
         // uint256 totalpay = timepa * payprofit;
 
