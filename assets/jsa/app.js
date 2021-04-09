@@ -328,17 +328,18 @@ App = {
         // payprofit = payprofit * 2000 / 1000;//20 / 1000; 2%
         // payprofit = payprofit / 1200;//86400 day
         // uint256 totalpay = timepa * payprofit;
-        
+
         // var payuser = this.totalAmountReInv * 2000 / 1000;//* 20 / 1000;
         payuser = payuser * 2000 / 1000//* 20 / 1000;
         payuser = payuser / 1200;//86400; day
-        payuser = (payuser * this.timepay);
+        // if(this.timepay)
+        // payuser = (payuser * this.timepay);
         // payuser = payuser + this.AVWithdrawB; //Referidos
         
         payuser = payuser / decimals;
         this.payB = payuser;
         payuser = payuser.toFixed(6);
-        var limit = this.amounInvest*2;
+        var limit = this.amounInvest * 2;
         
         limit = limit - this.totalpay;
         limit = limit/decimals;
