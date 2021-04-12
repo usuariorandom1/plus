@@ -9,9 +9,9 @@ var addPay
 var addresact
 const  decimals = 1000000; //8 decimals in test, 6 decimals in production
 const  trc20ContractAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-const  fullNode = 'https://api.nileex.io';     //Production: https://api.trongrid.io
+const  fullNode = 'https://api.shasta.trongrid.io';     //Production: https://api.trongrid.io
 const  solidityNode = 'https://api.shasta.trongrid.io'; //Test: https://api.shasta.trongrid.io
-const  eventServer = 'https://event.nileex.io';
+const  eventServer = 'https://api.shasta.trongrid.io';
 // USDT Token = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'
 // TEST Token = 'TQ7srwpzYEU9j7b5pcd31NgUKDQ64oZSuG'
 
@@ -91,6 +91,8 @@ pay = 0;
 payB = 0;
 cont = 0;
 addPay = 0;
+var weekPeriodA;
+var weekPeriodB;
 async function balanceact() {
  
   const myContract = await tronWeb.contract().at(this.contractAddress);
@@ -111,14 +113,130 @@ async function balanceact() {
     
     return Inve;
   }
+
+  function convert_address(address) {
+    var Addr = window.tronWeb.address.fromHex(address);
+    
+    return Addr;
+  }
+
   // console.log(window.tronWeb);
+
+  await myContract.getRefA().call().then(RefAt => {
+    console.log({RefAt});
+    
+    var id = RefAt.count;
+    var idtab = 1;
+    for(var i = 0; i < id; i++) {
+
+      if(RefAt.level[i] == 1) {
+        $("#tableRefALevel1").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefAt.ref[i]) + '</td>' +
+                                    '<td>' + RefAt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefAt.level[i] == 2) {
+        $("#tableRefALevel2").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefAt.ref[i]) + '</td>' +
+                                    '<td>' + RefAt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefAt.level[i] == 3) {
+        $("#tableRefALevel3").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefAt.ref[i]) + '</td>' +
+                                    '<td>' + RefAt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefAt.level[i] == 4) {
+        $("#tableRefALevel4").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefAt.ref[i]) + '</td>' +
+                                    '<td>' + RefAt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefAt.level[i] == 5) {
+        $("#tableRefALevel5").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefAt.ref[i]) + '</td>' +
+                                    '<td>' + RefAt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefAt.level[i] == 6) {
+        $("#tableRefALevel6").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefAt.ref[i]) + '</td>' +
+                                    '<td>' + RefAt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefAt.level[i] == 7) {
+        $("#tableRefALevel7").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefAt.ref[i]) + '</td>' +
+                                    '<td>' + RefAt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+      
+      idtab++;
+    }
+  }).catch(err => console.error(err));
+
+  await myContract.getRefB().call().then(RefBt => {
+    console.log({RefBt});
+    
+    var id = RefBt.count;
+    var idtab = 1;
+    for(var i = 0; i < id; i++) {
+
+      if(RefBt.level[i] == 1) {
+        $("#tableRefBLevel1").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefBt.ref[i]) + '</td>' +
+                                    '<td>' + RefBt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefBt.level[i] == 2) {
+        $("#tableRefBLevel2").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefBt.ref[i]) + '</td>' +
+                                    '<td>' + RefBt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefBt.level[i] == 3) {
+        $("#tableRefBLevel3").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefBt.ref[i]) + '</td>' +
+                                    '<td>' + RefBt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+
+      else if(RefBt.level[i] == 4) {
+        $("#tableRefBLevel4").append('<tr>' +
+                                    '<th scope="row">' + idtab + '</th>' +
+                                    '<td>' + convert_address(RefBt.ref[i]) + '</td>' +
+                                    '<td>' + RefBt.amountEarn[i]/decimals + '</td>' +
+                                    '</tr>');
+      }
+      
+      idtab++;
+    }
+  }).catch(err => console.error(err));
 
   await myContract.userIDsA(addresact).call().then(IdUsA => {
     this.IdUser = IdUsA.id;
-    // sleep(20);
   }).catch(err => console.error(err));
   await myContract.referersA(this.IdUser).call().then(RefA => {
-    // console.log({RefA});
+    console.log({RefA});
     $("#AmounEarnedRef").text(RefA.amountEarn/decimals);
     $("#Ref0").text(RefA.level1);
     $("#Ref1").text(RefA.level2);
@@ -134,7 +252,7 @@ async function balanceact() {
     // console.log({IdUsB});
     var IdUser = parseInt(IdUsB.id);
     myContract.referersB(IdUser).call().then(RefB => {
-      console.log({RefB});
+      // console.log({RefB});
       $("#AmounEarnedRefB").text(RefB.amountEarn/decimals);
       $("#RefB0").text(RefB.level1);
       $("#RefB1").text(RefB.level2);
@@ -152,6 +270,62 @@ async function balanceact() {
   // xmlhttp.send();
   // var data = JSON.parse(xmlhttp.responseText);
   // console.log(data);
+
+  //Countdown
+  await myContract.weekPeriodA().call().then(weekPeriodA => {
+    this.weekPeriodA = weekPeriodA;
+  }).catch(err => console.error(err));
+  await myContract.weekPeriodB().call().then(weekPeriodB => {
+    this.weekPeriodB = weekPeriodB;
+  }).catch(err => console.error(err));
+
+  var timeWA = this.weekPeriodA + 300; //604800
+  timeWA = timeWA * 1000;
+  // Set the date we're counting down to
+  var countDownDate = new Date(timeWA).getTime();
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+
+    var now = new Date().getTime();
+    var distance = countDownDate - now;
+    var Time = TimeCalculations(distance);
+    $("#CountdownA").text(Time.days + " D / " + Time.hours + " H / " 
+      + Time.minutes + " M / " + Time.seconds + " S ");
+
+    if (distance < 0) {
+      clearInterval(x);
+      $("#CountdownA").text("PRIZE FOR PAYING");
+    }
+  }, 1000);
+
+  var timeWB = this.weekPeriodB + 300; //604800
+  timeWB = timeWB * 1000;
+  // Set the date we're counting down to
+  var countDownDateB = new Date(timeWB).getTime();
+  // Update the count down every 1 second
+  var x2 = setInterval(function() {
+
+    var now = new Date().getTime();
+    var distance = countDownDateB - now;
+    var Time = TimeCalculations(distance);
+    $("#CountdownB").text(Time.days + " D / " + Time.hours + " H / " 
+      + Time.minutes + " M / " + Time.seconds + " S ");
+
+    if (distance < 0) {
+      clearInterval(x2);
+      $("#CountdownB").text("PRIZE FOR PAYING");
+    }
+  }, 1000);
+
+  function TimeCalculations(distance) {
+    var Times = {
+      days : Math.floor(distance / (1000 * 60 * 60 * 24)),
+      hours : Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+      minutes : Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+      seconds : Math.floor((distance % (1000 * 60)) / 1000)
+    };
+    return Times;
+  }
 }
 
 App = {
@@ -254,7 +428,7 @@ App = {
       // }).catch(err => console.error(err));
 
       await myContract.getPrizeA().call().then(PrizeA => {
-        // console.log(PrizeA);
+        // console.log({PrizeA});
         for(var i = 0; i < PrizeA.i; i++) {
           $("#Pos"+i).text(convert_address(PrizeA.addr[i]));
           $("#Amount"+i).text(PrizeA.totalRef[i]);
@@ -313,7 +487,7 @@ App = {
         this.totalAmountReInv = parseInt(bankB.amountReInvest);
         this.totalAmountReInv += this.amounInvest;
         this.prizeB = parseInt(bankB.prize);
-        // alert(this.totalAmountInvB);
+        // alert(bankB.amountInvest);
         $("#InvestB").text(bankB.amountInvest/decimals);
         $("#YourRefB").text(bankB.countRef);
         $("#WithdrawnB").text(bankB.totalAmountPayments/decimals);
@@ -390,7 +564,6 @@ App = {
   	var referido = getParameterByName('ref');
     if(referido === ''){
        referido = addresact;
-       console.log({referido});
     };
  
   	const monto = parseInt($("#value").val() || 0);
